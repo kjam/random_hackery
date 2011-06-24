@@ -1,6 +1,34 @@
-from celerymonitor.service import MonitorService
+from celery.app import app_or_default
+import cPickle
 import logging
 
-logger = logging.getLogger()
-m = MonitorService(logger)
-m.start()
+class EventMonitor(object):
+
+    def __init__(self,app=None):
+        self.app = app_or_default()
+        self.conn = self.app.broker_connection()
+        self.recv = self.app.events.Receiver(self.conn, handlers={"*": self.push_event})
+        self.eventList = []
+        
+        try:
+            self.recv.capture()
+        except:
+            logging.info("Receiver closed...")
+
+    def get_state(self):
+        return self.app.events.State()
+   
+
+    def push_event(self, event):
+        self.eventList.append(event)
+        f = open('data/event_queue','wb')
+        cPickle.dump(self.eventList,f)
+        f.close()
+
+def start_monitoring():
+    mon = EventMonitor()
+
+
+if __name__=='__main__':
+    mon = EventMonitor()
+
