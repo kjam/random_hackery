@@ -9,11 +9,12 @@ class EventMonitor(object):
         self.conn = self.app.broker_connection()
         self.recv = self.app.events.Receiver(self.conn, handlers={"*": self.push_event})
         self.eventList = []
-        
+        self.taskEventList = []
         try:
             self.recv.capture()
         except:
             logging.info("Receiver closed...")
+
 
     def get_state(self):
         return self.app.events.State()
@@ -21,9 +22,11 @@ class EventMonitor(object):
 
     def push_event(self, event):
         self.eventList.append(event)
-        f = open('data/event_queue','wb')
-        cPickle.dump(self.eventList,f)
-        f.close()
+        if 'task' in event['type']:
+            self.taskEventList.append(event)
+            f = open('data/event_queue','wb')
+            cPickle.dump(self.taskEventList,f)
+            f.close()
 
 def start_monitoring():
     mon = EventMonitor()
