@@ -5,7 +5,7 @@ import smtplib
 from BeautifulSoup import BeautifulSoup
 
 GMAIL_LOGIN = 'pyladiestest@gmail.com'
-GMAIL_PASSWORD = 't3st1ng!'
+GMAIL_PASSWORD = 'YOU NO CAN HAZ'
 
 def send_email(subject, message, from_addr=GMAIL_LOGIN, to_addr=GMAIL_LOGIN):
     msg = MIMEText(message)
