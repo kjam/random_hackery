@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Scraping the Web with Python (OR how I get my happy hour specials delivered to my Inbox)</title>
+<!-- metadata -->
+<meta name="generator" content="S5" />
+<meta name="version" content="S5 1.1" />
+<meta name="presdate" content="20110418" />
+<meta name="author" content="Katharine Jarmul" />
+<meta name="company" content="Loud3r" />
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<link rel="stylesheet" href="ui/i18n/code.css" type="text/css" />
+<link rel="stylesheet" href="ui/i18n/slides.css" type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/i18n/pretty.css" type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css" type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
+<!-- S5 JS -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+</head>
+<body>
+
+<div class="layout">
+<div id="controls"><!-- DO NOT EDIT --></div>
+<div id="currentSlide"><!-- DO NOT EDIT --></div>
+<div id="header"></div>
+<div id="footer">
+<h1>5/15/2011</h1>
+<h2>Scraping the Web with Python (OR how I get my happy hour specials delivered to my Inbox)</h2>
+</div>
+
+</div>
+
+
+<div class="presentation">
+
+<div class="slide">
+<h1>Scraping the Web with Python</h1>
+<h2>(OR... how I get my happy hour specials delivered to my Inbox)</h2>
+<h3>Katharine Jarmul & Esther Nam</h3>
+<h4>@kjam & @estherbester</h4>
+</div>
+
+
+<div class="slide">
+<h1>Overview</h1>
+<ul class="incremental">
+<li>Why scrape the Web with Python</li>
+<li>Simple page reading (urllib2)</li>
+<li>More complex scraping (lxml)</li>
+<li>Common hangups</li>
+<li>Email with python</li>
+</ul>
+</div>
+
+
+<div class="slide">
+<h1>Why Scrape the Web</h1>
+<ul class="incremental">
+<li>Informative</li>
+<li>Super fun</li>
+<li>VAST source of information</li>
+<li>Content is king</li>
+</ul>
+</div>
+
+<div class="slide">
+<h1>Why Use Python?</h1>
+<ul class="incremental">
+<li>Scripting languages RULE THE WEB. (no, really)</li>
+<li>Dynamic</li>
+<li>Many useful libs, modules, tools, examples</li>
+<li>Constantly growing source of open-source tools (Hey, you should open source <em>your</em> tool once you build it!)</li>
+</ul>
+</div>
+
+
+<div class="slide">
+<h1>Let's Open a Web Page</h1>
+<pre><span class="kn">import</span> <span class="nn">urllib2</span>
+
+<span class="k">def</span> <span class="nf">get_site_html</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">source</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">get_site_html</span><span class="p">(</span><span class="n">'http://google.com'</span><span class="p">)</span>
+</pre>
+</div>
+
+
+
+<div class="slide">
+<h1>WAIT!! What are we DOING?</h1>
+<ul class="incremental">
+<li>Read the dox, they are SUPER helpful: http://docs.python.org/library/urllib2.html</li>
+<li>Whenever we explore new libraries, let's do some iPython (or python, interaction)</li>
+<li>Fire up a terminal!   >:)</li>
+</ul>
+</div>
+
+<div class="slide">
+<h1>urllib/urllib2 POP QUIZ (keep those terminals open!)</h1>
+<ul class="incremental">
+<li>Is the word 'python' on the pyladies homepage (http://pyladies.com)?</li>
+<li>Does google.com have an image? (hint: img tag!)</li>
+<li>What are the first 10 characters on python.org?</li>
+<li>Bonus: Find your name on a web page!</li>
+</ul>
+</div>
+
+<div class="slide">
+<h1>Review: urllib/urllib2 are a GREAT starting points</h1>
+<ul class="incremental">
+<li>Easily read HTML pages</li>
+<li>Test for the presence of elements</li>
+<li>Read JSON (usually put it though simplejson as well)</li>
+<li>Great for APIs</li>
+</ul>
+</div>
+
+<div class="slide">
+<h1>Let's get more complex...</h1>
+<ul class="incremental">
+<li>I want to use the web to look for something specific! I don't care what's on python.org!</li>
+<li>More advanced libraries</li>
+<ul>
+<li>BeautifulSoup</li>
+<li>html5lib</li>
+<li>lxml</li>
+<ul>
+</ul>
+</div>
+
+
+
+<div class="slide">
+<h1>Let's look at what web pages are MADE OF...</h1>
+<ul class="incremental">
+<li>HTML / CSS are your best friends</li>
+<li>Firebug is your best weapon</li>
+<li>Let's investigate... </li>
+<li>Who doesn't like happy hours? (let's visit http://downtownla.com > Happy Hours)</li>
+</ul>
+</div>
+
+
+
+
+
+<div class="slide">
+<h1>LXML: Intro to your new friend</h1>
+<ul class="incremental">
+<li>http://lxml.de/index.html</li>
+<li>lxml.html</li>
+<ul>
+<li>css_select</li>
+<li>find_class</li>
+<li>text_content</li>
+<li>clean_html</li>
+</ul></ul>
+</div>
+
+
+
+
+
+<div class="slide">
+<h1>Isolating areas of a page</h1>
+<div class="highlight"><pre>
+<span class="k">def</span> <span class="nf">get_all_tags</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">tag</span><span class="p">):</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">get_site_html</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">document_fromstring</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="n">cssselect</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c"># First, I&#39;m going to identify the areas of the page I want to look at</span>
+    <span class="n">tables</span> <span class="o">=</span> <span class="n">get_all_tags</span><span class="p">(</span>
+                <span class="s">&#39;http://www.downtownla.com/3_10_happyHours.asp?action=ALL&#39;</span><span class="p">,</span>
+                <span class="s">&#39;table table div table td&#39;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+
+
+<div class="slide">
+<h1>WAIT!! What are we DOING?</h1>
+<ul class="incremental">
+<li>Whenever we explore new libraries, let's do some iPython (or python, interaction)</li>
+<li>Fire up a terminal!   >:)</li>
+</ul>
+</div>
+
+<div class="slide">
+<h1>Let's get specific-al</h1>
+<div class="highlight"><pre>
+    <span class="n">found_happy_hours</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c"># Then, I&#39;m going to sort out the *exact* parts of the page </span>
+    <span class="c"># that match what I&#39;m looking for...</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">cssselect</span><span class="p">(</span><span class="s">&#39;p.calendar_EventTitle&#39;</span><span class="p">):</span>
+            <span class="n">found_happy_hours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">text_content</span><span class="p">())</span>
+</pre></div>
+</div>
+
+
+<div class="slide">
+<h1>Parsing and sorting what we find</h1>
+<div class="highlight"><pre>
+    <span class="c"># Now I&#39;m going to loop through the food I like </span>
+    <span class="c"># and see if any of the happy hour descriptions match</span>
+    <span class="k">for</span> <span class="n">food</span> <span class="ow">in</span> <span class="n">stuff_i_like</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hh</span> <span class="ow">in</span> <span class="n">found_happy_hours</span><span class="p">:</span>
+            <span class="c"># checking for text AND making sure I don&#39;t have duplicates</span>
+            <span class="k">if</span> <span class="n">food</span> <span class="ow">in</span> <span class="n">hh</span> <span class="ow">and</span> <span class="n">hh</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">my_happy_hours</span><span class="p">:</span> 
+                <span class="k">print</span> <span class="s">&quot;YAY! I found some </span><span class="si">%s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="n">food</span>
+                <span class="n">my_happy_hours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hh</span><span class="p">)</span>
+</pre></div>
+</div>
+
+<div class="slide">
+<h1>Hmmm.</h1>
+<ul class="incremental">
+<li>That's all good and great, but I don't want to run this every day!</li>
+<li>Might as well go to the web page and use Cntl + F, GOOD JOB LADIES (eyeroll)</li>
+<li>FEAR NOT!!!</li>
+</ul>
+</div>
+
+
+<div class="slide">
+<h1>Writing a message</h1>
+<div class="highlight"><pre>
+    <span class="c">#Now, let&#39;s make a mail message we can read:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s">&#39;Hey Katharine,</span><span class="se">\n\n\n</span><span class="s">&#39;</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s">&#39;OMG, I found some stuff for you in Downtown, take a look.</span><span class="se">\n\n</span><span class="s">&#39;</span> 
+    <span class="n">message</span> <span class="o">+=</span> <span class="s">&#39;==============================</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">my_happy_hours</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span> 
+    <span class="c"># To read more about encoding:</span>
+    <span class="c"># http://diveintopython.org/xml_processing/unicode.html</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\r</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">XOXO,</span><span class="se">\n</span><span class="s"> Your Py Script&#39;</span>
+</pre></div>
+</div>
+
+<div class="slide">
+<h1>Emailing what you found</h1>
+<div class="highlight"><pre>
+    <span class="c">#And email it to ourselves!</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;katharine@pyladies.com&#39;</span>
+    <span class="n">send_email</span><span class="p">(</span><span class="s">&#39;Happy Hour Update&#39;</span><span class="p">,</span><span class="n">message</span><span class="p">,</span> 
+                <span class="n">from_addr</span><span class="o">=</span><span class="n">GMAIL_LOGIN</span><span class="p">,</span> <span class="n">to_addr</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+
+</pre></div>
+</div>
+
+<div class="slide">
+<h1>Let's run it all from the top!</h1>
+<ul class="incremental">
+<li>Put in your email...</li>
+<li>python scraper.py</li>
+</ul>
+</div>
+
+<div class="slide">
+<h1>A note on limitations</h1>
+<ul class="incremental">
+<li>A lot of the web is broken (sad face...)</li>
+<li>Although there are *many* helpers, sometimes there are no patterns</li>
+<li>Sites change, move, go offline</li>
+<li>Steve Jobs is right about one thing: Flash is evil</li>
+</ul>
+</div>
+
+
+
+<div class="slide">
+<h1>But, even with limitations, there's TONS you can do</h1>
+<ul class="incremental">
+<li>Build HTML, XML, JSON from data</li>
+<li>So many APIS!!!</li>
+<li>Mechanize can help with complex user-agents / behaviors</li>
+<li>Automate web tasks</li>
+</ul>
+</div>
+
+
+<div class="slide">
+<h1>Questions???</h1>
+<ul class="incremental">
+<li>If not... let's work on some scraper ideas you have!</li>
+</ul>
+</div>
+
+
+<div class="slide">
+<h1>Read more</h1>
+<li>Tutorials</li>
+<ul>
+<li>http://www.asheesh.org/note/preso/pycon09-scraping-fun.html</li>
+<li>http://diveintopython3.org/xml.html</li>
+<li>http://www.goldb.org/pythonwebscraping.html</li>
+</ul>
+<li>Dox</li>
+<ul>
+<li>http://docs.python.org/library/urllib2.html & http://lxml.de/</li>
+<li>http://wwwsearch.sourceforge.net/mechanize/</li>
+<li>http://code.google.com/p/html5lib/</li>
+<li>http://scrapy.org/</li>
+</ul>
+</div>
+
+
+
+
+
+</div>
+
+</body>
+</html>

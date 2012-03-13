@@ -1,0 +1,82 @@
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">import</span> <span class="nn">simplejson</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">email.MIMEText</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+
+<span class="n">GMAIL_LOGIN</span> <span class="o">=</span> <span class="s">&#39;pyladiestest@gmail.com&#39;</span>
+<span class="n">GMAIL_PASSWORD</span> <span class="o">=</span> <span class="s">&#39;t3st1ng!&#39;</span>
+
+<span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="n">GMAIL_LOGIN</span><span class="p">,</span> <span class="n">to_addr</span><span class="o">=</span><span class="n">GMAIL_LOGIN</span><span class="p">):</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">from_addr</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_addr</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;Reply-To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;happyhours@noreply.com&#39;</span>
+                    
+    <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="s">&#39;smtp.gmail.com&#39;</span><span class="p">,</span><span class="mi">587</span><span class="p">)</span> <span class="c">#port 465 or 587</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">GMAIL_LOGIN</span><span class="p">,</span><span class="n">GMAIL_PASSWORD</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">to_addr</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">get_site_html</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">source</span>
+
+
+<span class="k">def</span> <span class="nf">get_all_tags</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">tag</span><span class="p">):</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">get_site_html</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">document_fromstring</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="n">cssselect</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">stuff_i_like</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;burger&#39;</span><span class="p">,</span><span class="s">&#39;wine&#39;</span><span class="p">,</span><span class="s">&#39;sushi&#39;</span><span class="p">,</span><span class="s">&#39;sweet potato fries&#39;</span><span class="p">,</span><span class="s">&#39;BBQ&#39;</span><span class="p">]</span>
+    <span class="n">found_happy_hours</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">my_happy_hours</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c"># First, I&#39;m going to identify the areas of the page I want to look at</span>
+    <span class="n">tables</span> <span class="o">=</span> <span class="n">get_all_tags</span><span class="p">(</span>
+                <span class="s">&#39;http://www.downtownla.com/3_10_happyHours.asp?action=ALL&#39;</span><span class="p">,</span>
+                <span class="s">&#39;table table div table td&#39;</span><span class="p">)</span>
+
+
+    <span class="c"># Then, I&#39;m going to sort out the *exact* parts of the page </span>
+    <span class="c"># that match what I&#39;m looking for...</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">cssselect</span><span class="p">(</span><span class="s">&#39;p.calendar_EventTitle&#39;</span><span class="p">):</span>
+            <span class="n">found_happy_hours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">text_content</span><span class="p">())</span>
+
+    <span class="k">print</span> <span class="s">&quot;The scraper found </span><span class="si">%d</span><span class="s"> happy hours!&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_happy_hours</span><span class="p">)</span>
+   
+    <span class="c"># Now I&#39;m going to loop through the food I like </span>
+    <span class="c"># and see if any of the happy hour descriptions match</span>
+    <span class="k">for</span> <span class="n">food</span> <span class="ow">in</span> <span class="n">stuff_i_like</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hh</span> <span class="ow">in</span> <span class="n">found_happy_hours</span><span class="p">:</span>
+            <span class="c"># checking for text AND making sure I don&#39;t have duplicates</span>
+            <span class="k">if</span> <span class="n">food</span> <span class="ow">in</span> <span class="n">hh</span> <span class="ow">and</span> <span class="n">hh</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">my_happy_hours</span><span class="p">:</span> 
+                <span class="k">print</span> <span class="s">&quot;YAY! I found some </span><span class="si">%s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="n">food</span>
+                <span class="n">my_happy_hours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hh</span><span class="p">)</span>
+    
+    <span class="k">print</span> <span class="s">&quot;I think you might like </span><span class="si">%d</span><span class="s"> of them, yipeeeee!&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_happy_hours</span><span class="p">)</span>
+    
+    <span class="c">#Now, let&#39;s make a mail message we can read:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s">&#39;Hey Katharine,</span><span class="se">\n\n\n</span><span class="s">&#39;</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s">&#39;OMG, I found some stuff for you in Downtown, take a look.</span><span class="se">\n\n</span><span class="s">&#39;</span> 
+    <span class="n">message</span> <span class="o">+=</span> <span class="s">&#39;==============================</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">my_happy_hours</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span> 
+    <span class="c"># To read more about encoding:</span>
+    <span class="c"># http://diveintopython.org/xml_processing/unicode.html</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\r</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">XOXO,</span><span class="se">\n</span><span class="s"> Your Py Script&#39;</span>
+
+    <span class="c">#And email it to ourselves!</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;katharine@pyladies.com&#39;</span>
+    <span class="n">send_email</span><span class="p">(</span><span class="s">&#39;Happy Hour Update&#39;</span><span class="p">,</span><span class="n">message</span><span class="p">,</span> 
+                <span class="n">from_addr</span><span class="o">=</span><span class="n">GMAIL_LOGIN</span><span class="p">,</span> <span class="n">to_addr</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+</pre></div>
