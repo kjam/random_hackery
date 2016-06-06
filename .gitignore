@@ -1,4 +1,7 @@
+*~
 *.pyc
 *.err
 *.log
 *.swp
+data/
+.*/
