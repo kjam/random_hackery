@@ -3,5 +3,4 @@
 *.err
 *.log
 *.swp
-data/
 .*/
